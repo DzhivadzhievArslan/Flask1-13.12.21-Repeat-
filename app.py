@@ -14,3 +14,5 @@ api.add_resource(AuthorResource,
 
 if __name__ == '__main__':
     app.run(debug=Config.DEBUG, port=Config.PORT)
+
+#test GIT settings
