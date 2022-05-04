@@ -1,13 +1,14 @@
 from api import Resource, reqparse, db
 from api.models.author import AuthorModel
+from api.schemas.author import author_schema, authors_schema
 
 
 class AuthorResource(Resource):
     def get(self, author_id=None):  # Если запрос приходит по url: /authors
         if author_id is None:
             authors = AuthorModel.query.all()
-            authors_list = [author.to_dict() for author in authors]
-            return authors_list, 200
+            # authors_list = [author.to_dict() for author in authors]
+            return authors_schema.dump(authors), 200
 
         # Если запрос приходит по url: /authors/<int:author_id>
         author = AuthorModel.query.get(author_id)
