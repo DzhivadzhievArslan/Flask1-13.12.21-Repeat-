@@ -1,4 +1,4 @@
-from api import Resource, reqparse, db
+from api import Resource, reqparse, db, auth
 from api.models.author import AuthorModel
 from api.models.quote import QuoteModel
 from api.schemas.quote import quote_schema, quotes_schema
@@ -6,12 +6,6 @@ from api.schemas.quote import quote_schema, quotes_schema
 
 class QuoteResource(Resource):
     def get(self, author_id=None, quote_id=None):
-        """
-        Обрабатываем GET запросы
-        :param author_id: id автора
-        :param quote_id: id цитаты
-        :return: http-response(json, статус)
-        """
         if author_id is None and quote_id is None:  # Если запрос приходит по url: /quotes
             quotes = QuoteModel.query.all()
             return [quote.to_dict() for quote in quotes]  # Возвращаем ВСЕ цитаты
@@ -19,13 +13,14 @@ class QuoteResource(Resource):
         author = AuthorModel.query.get(author_id)
         if quote_id is None:  # Если запрос приходит по url: /authors/<int:author_id>/quotes
             quotes = author.quotes.all()
-            return [quote.to_dict() for quote in quotes], 200  # Возвращаем все цитаты автора
+            return quotes_schema.dump(quotes), 200  # Возвращаем все цитаты автора
 
         quote = QuoteModel.query.get(quote_id)
         if quote is not None:
             return quote_schema.dump(quote), 200
         return {"Error": "Quote not found"}, 404
 
+    @auth.login_required
     def post(self, author_id):
         parser = reqparse.RequestParser()
         parser.add_argument("text", required=True)

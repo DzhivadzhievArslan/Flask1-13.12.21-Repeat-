@@ -3,7 +3,7 @@ from api.models.quote import QuoteModel
 from api.schemas.author import AuthorSchema
 
 
-# Сериализатор: object --> dict
+# Сериализатор: object --> dict --> json
 class QuoteSchema(ma.SQLAlchemySchema):
     class Meta:
         model = QuoteModel
